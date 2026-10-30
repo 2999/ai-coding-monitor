@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: http: https:; style-src 'self' 'unsafe-inline'; script-src 'self'" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Coding Monitor</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="settings.css" />
+  </head>
+  <body>
+    <svg class="svg-defs" aria-hidden="true">
+      <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18.5 8.5 12 15 5.5" /></symbol>
+      <symbol id="i-forward" viewBox="0 0 24 24"><path d="M9 5.5 15.5 12 9 18.5" /></symbol>
+      <symbol id="i-reload" viewBox="0 0 24 24"><path d="M20.5 12a8.5 8.5 0 1 1-2.6-6.1" /><path d="M20.5 4.5V10H15" /></symbol>
+      <symbol id="i-grid" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2" /><rect x="13.5" y="3.5" width="7" height="7" rx="2" /><rect x="3.5" y="13.5" width="7" height="7" rx="2" /><rect x="13.5" y="13.5" width="7" height="7" rx="2" /></symbol>
+      <symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 7h9" /><path d="M17 7h3" /><path d="M4 17h3" /><path d="M11 17h9" /><circle cx="15" cy="7" r="2.2" /><circle cx="9" cy="17" r="2.2" /></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14" /><path d="M5 12h14" /></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16" /><path d="M9 7V4h6v3" /><path d="M6 7l1 13h10l1-13" /><path d="M10 11v6M14 11v6" /></symbol>
+      <symbol id="i-external" viewBox="0 0 24 24"><path d="M14 4h6v6" /><path d="M20 4l-9 9" /><path d="M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5" /></symbol>
+      <symbol id="i-grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="0.7" fill="currentColor" stroke="none" /><circle cx="15" cy="6" r="0.7" fill="currentColor" stroke="none" /><circle cx="9" cy="12" r="0.7" fill="currentColor" stroke="none" /><circle cx="15" cy="12" r="0.7" fill="currentColor" stroke="none" /><circle cx="9" cy="18" r="0.7" fill="currentColor" stroke="none" /><circle cx="15" cy="18" r="0.7" fill="currentColor" stroke="none" /></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 3 3v2H7v-2l3-3-1-6z" /><path d="M12 14v7" /></symbol>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" /><path d="M16 16l4 4" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12" /><path d="M18 6L6 18" /></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" /><path d="M3.5 12h17" /><path d="M12 3.5c2.4 2.3 3.6 5.2 3.6 8.5S14.4 18.2 12 20.5c-2.4-2.3-3.6-5.2-3.6-8.5S9.6 5.8 12 3.5z" /></symbol>
+      <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 8v5" /><circle cx="12" cy="17" r="0.6" fill="currentColor" stroke="none" /><path d="M10.3 3.9 2.8 17a2 2 0 0 0 1.7 3h15a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" /></symbol>
+    </svg>
+
+    <header id="topbar">
+      <div class="traffic-space"></div>
+      <div class="page-id">
+        <span class="page-favicon" id="top-favicon"></span>
+        <div class="page-titles">
+          <span id="top-title">AI Coding Monitor</span>
+          <span id="top-host">本地收藏切换器</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="icon-btn" id="btn-back" title="后退 (⌘[)" disabled>
+          <svg><use href="#i-back" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-forward" title="前进 (⌘])" disabled>
+          <svg><use href="#i-forward" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-reload" title="刷新 (⌘R)" disabled>
+          <svg><use href="#i-reload" /></svg>
+        </button>
+        <form id="address-form" autocomplete="off">
+          <svg class="address-icon"><use href="#i-globe" /></svg>
+          <input id="address" type="text" spellcheck="false" placeholder="输入网址，回车访问" disabled />
+        </form>
+        <button class="icon-btn" id="btn-grid" title="页面总览 (⌘⇧Space)">
+          <svg><use href="#i-grid" /></svg>
+        </button>
+        <button class="icon-btn" id="btn-settings" title="设置 (⌘,)">
+          <svg><use href="#i-settings" /></svg>
+        </button>
+      </div>
+
+      <div id="loading-bar"></div>
+    </header>
+
+    <main id="stage">
+      <div id="page-layer"></div>
+
+      <section id="home">
+        <div class="home-inner">
+          <div class="home-mark">
+            <span></span><span></span><span></span>
+          </div>
+          <h1 id="home-title">AI Coding Monitor</h1>
+          <p id="home-desc">把常用页面收进来，一个快捷键切过去。</p>
+
+          <div id="home-cards" class="home-cards"></div>
+
+          <div class="home-actions">
+            <button id="home-primary" class="btn primary">添加收藏</button>
+            <button id="home-secondary" class="btn ghost" hidden>页面总览</button>
+          </div>
+
+          <div class="home-hints">
+            <span><kbd>⌃</kbd><kbd>Tab</kbd> 循环切换</span>
+            <span><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Space</kbd> 页面总览</span>
+            <span><kbd>⌘</kbd><kbd>1</kbd>~<kbd>9</kbd> 直接切换</span>
+          </div>
+        </div>
+      </section>
+
+      <div id="page-error" hidden>
+        <div class="err-card">
+          <svg class="err-icon"><use href="#i-alert" /></svg>
+          <h2>页面打不开</h2>
+          <p id="err-desc" class="err-desc"></p>
+          <p id="err-url" class="err-url"></p>
+          <button id="err-retry" class="btn primary">重试</button>
+        </div>
+      </div>
+
+      <div id="rail-trigger" title="收藏页面"></div>
+
+      <nav id="rail" aria-label="收藏页面">
+        <button id="rail-brand" class="rail-brand" title="页面总览 (⌘⇧Space)">
+          <span></span><span></span><span></span>
+        </button>
+        <div id="rail-list" class="rail-list"></div>
+        <div class="rail-foot">
+          <button id="rail-add" class="rail-btn" title="添加收藏">
+            <svg><use href="#i-plus" /></svg>
+          </button>
+          <button id="rail-pin" class="rail-btn" title="固定侧边栏">
+            <svg><use href="#i-pin" /></svg>
+          </button>
+          <button id="rail-settings" class="rail-btn" title="设置 (⌘,)">
+            <svg><use href="#i-settings" /></svg>
+          </button>
+        </div>
+      </nav>
+
+      <div id="rail-tip" hidden>
+        <div class="tip-thumb" id="tip-thumb"></div>
+        <div class="tip-body">
+          <div class="tip-name" id="tip-name"></div>
+          <div class="tip-host" id="tip-host"></div>
+          <div class="tip-key" id="tip-key"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="hud" hidden>
+      <span class="hud-icon" id="hud-icon"></span>
+      <div class="hud-text">
+        <span class="hud-name" id="hud-name"></span>
+        <span class="hud-meta" id="hud-meta"></span>
+      </div>
+      <div class="hud-dots" id="hud-dots"></div>
+    </div>
+
+    <div id="grid-overlay" hidden>
+      <div class="grid-panel">
+        <div class="grid-head">
+          <div class="grid-title">
+            页面总览
+            <span id="grid-count"></span>
+          </div>
+          <label class="grid-search" for="grid-search">
+            <svg><use href="#i-search" /></svg>
+            <input id="grid-search" type="text" placeholder="输入名称或网址筛选…" spellcheck="false" autocomplete="off" />
+          </label>
+          <div class="grid-hint">↑↓ 选择 · ↵ 打开 · esc 关闭</div>
+        </div>
+        <div id="grid-items" class="grid-items"></div>
+      </div>
+    </div>
+
+    <div id="toast" hidden></div>
+
+    <section id="settings-view" hidden tabindex="-1" aria-label="设置">
+      <header class="s-top">
+        <div class="traffic-space"></div>
+        <h1>设置</h1>
+        <nav class="tabs" id="tabs">
+          <button data-tab="favorites" class="on">收藏页面</button>
+          <button data-tab="general">通用</button>
+        </nav>
+        <div class="s-top-note">AI Coding Monitor</div>
+        <button id="s-close" class="icon-btn settings-close" title="返回 (Esc)" aria-label="关闭设置">
+          <svg><use href="#i-close" /></svg>
+        </button>
+      </header>
+
+      <div class="s-main">
+        <section class="pane on" id="pane-favorites">
+          <aside class="list-pane">
+            <div class="list-head">
+              <span id="list-count">0 个页面</span>
+              <button id="btn-new" class="btn primary small">
+                <svg><use href="#i-plus" /></svg>新建
+              </button>
+            </div>
+            <ul id="list" class="fav-list"></ul>
+            <div class="list-foot">拖动左侧手柄排序</div>
+          </aside>
+
+          <div class="edit-pane">
+            <div id="editor-empty" class="editor-empty">
+              <div class="empty-glyph">
+                <span></span><span></span><span></span>
+              </div>
+              <p>选择左侧页面进行编辑，或新建一个收藏。</p>
+              <p class="muted">添加后可用 ⌘1 ~ ⌘9 直接切换。</p>
+            </div>
+
+            <form id="editor" class="editor" hidden autocomplete="off">
+              <div class="preview">
+                <span class="avatar" id="preview-avatar"></span>
+                <div class="preview-text">
+                  <div class="preview-name" id="preview-name">未命名</div>
+                  <div class="preview-url" id="preview-url"></div>
+                </div>
+                <button type="button" class="btn ghost small preview-open" id="btn-open">
+                  <svg><use href="#i-external" /></svg>打开
+                </button>
+              </div>
+
+              <label class="field">
+                <span>名称</span>
+                <input id="f-name" type="text" maxlength="40" placeholder="例如 GitHub" />
+              </label>
+
+              <label class="field">
+                <span>网址</span>
+                <input id="f-url" type="text" spellcheck="false" placeholder="https://github.com" />
+                <small class="hint">必须是 http / https 网址</small>
+              </label>
+
+              <label class="field">
+                <span>图标地址 <em>可选</em></span>
+                <input id="f-icon" type="text" spellcheck="false" placeholder="留空自动获取站点 favicon" />
+              </label>
+
+              <div class="field inline">
+                <div>
+                  <span>标识色</span>
+                  <small class="hint">用于站点没有图标时的字母头像</small>
+                </div>
+                <div class="color-wrap">
+                  <input id="f-color" type="color" value="#4f6ef7" />
+                  <button type="button" id="btn-random-color" class="btn ghost small">随机</button>
+                </div>
+              </div>
+
+              <p id="form-error" class="form-error" hidden></p>
+
+              <div class="editor-actions">
+                <button type="button" id="btn-delete" class="btn danger">
+                  <svg><use href="#i-trash" /></svg>删除
+                </button>
+                <span class="grow"></span>
+                <span id="dirty-indicator" class="dirty">已保存</span>
+                <button type="submit" id="btn-save" class="btn primary" disabled>保存</button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+        <section class="pane" id="pane-general">
+          <div class="general">
+            <div class="group">
+              <div class="group-title">运行</div>
+
+              <div class="row">
+                <div class="row-text">
+                  <div class="row-label">常驻页面数量</div>
+                  <div class="row-desc">同时保留在后台的页面数量（0–5）。设为 0 时只保留当前页面；越多切换越快，内存占用也越高。</div>
+                </div>
+                <input
+                  id="s-resident"
+                  type="number"
+                  min="0"
+                  max="5"
+                  step="1"
+                  inputmode="numeric"
+                  aria-label="常驻页面数量（0-5）"
+                />
+              </div>
+
+              <div class="row">
+                <div class="row-text">
+                  <div class="row-label">启动时打开</div>
+                  <div class="row-desc">应用启动后默认显示的页面。</div>
+                </div>
+                <select id="s-startup">
+                  <option value="last">上次使用的页面</option>
+                  <option value="first">第一个收藏</option>
+                  <option value="empty">不打开（显示首页）</option>
+                </select>
+              </div>
+
+              <div class="row">
+                <div class="row-text">
+                  <div class="row-label">固定侧边栏</div>
+                  <div class="row-desc">让收藏栏常驻显示，不再自动隐藏。</div>
+                </div>
+                <label class="switch"><input type="checkbox" id="s-pinned" /><span></span></label>
+              </div>
+            </div>
+
+            <div class="group">
+              <div class="group-title">快捷键</div>
+              <div class="shortcut-list">
+                <div><kbd>⌃</kbd><kbd>Tab</kbd><span>循环切换到下一个页面</span></div>
+                <div><kbd>⌃</kbd><kbd>⇧</kbd><kbd>Tab</kbd><span>循环切换到上一个页面</span></div>
+                <div><kbd>⌘</kbd><kbd>⇧</kbd><kbd>Space</kbd><span>页面总览（可搜索）</span></div>
+                <div><kbd>⌘</kbd><kbd>1</kbd> ~ <kbd>9</kbd><span>直接切换到第 N 个收藏</span></div>
+                <div><kbd>⌘</kbd><kbd>L</kbd><span>聚焦地址栏</span></div>
+                <div><kbd>⌘</kbd><kbd>R</kbd><span>刷新当前页面</span></div>
+                <div><kbd>⌘</kbd><kbd>[</kbd><kbd>⌘</kbd><kbd>]</kbd><span>后退 / 前进</span></div>
+                <div><kbd>⌘</kbd><kbd>,</kbd><span>打开设置</span></div>
+                <div><kbd>⌘</kbd><kbd>W</kbd><span>关闭设置，或隐藏窗口</span></div>
+              </div>
+            </div>
+
+            <div class="group">
+              <div class="group-title">数据</div>
+
+              <div class="row">
+                <div class="row-text">
+                  <div class="row-label">备份收藏</div>
+                  <div class="row-desc">导出为 JSON，或从备份文件导入（自动跳过重复网址）。</div>
+                </div>
+                <div class="row-actions">
+                  <button id="btn-export" class="btn ghost small">导出</button>
+                  <button id="btn-import" class="btn ghost small">导入</button>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="row-text">
+                  <div class="row-label">清除网站数据</div>
+                  <div class="row-desc">清除所有收藏页面的 Cookie、登录状态与缓存。操作不可撤销。</div>
+                </div>
+                <button id="btn-clear" class="btn danger small">清除</button>
+              </div>
+
+              <div class="path-line">
+                数据文件：<code id="data-path"></code>
+              </div>
+            </div>
+
+            <div class="about" id="about">AI Coding Monitor</div>
+          </div>
+        </section>
+      </div>
+
+      <div id="s-toast" hidden></div>
+    </section>
+
+    <script src="app.js"></script>
+    <script src="settings.js"></script>
+  </body>
+</html>
