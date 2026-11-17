@@ -75,6 +75,12 @@ open -a "AI Coding Monitor"
 ├── preload.js               # 渲染进程安全桥
 ├── src/
 │   ├── config.js            # 本地 JSON 配置存储
+│   ├── guest/
+│   │   └── customizations/  # 针对特定站点的页面定制（独立模块，自动按 URL 匹配注入）
+│   │       ├── index.js     # 定制模块注册表
+│   │       ├── hosts.js     # 共享站点域名
+│   │       ├── header-refresh/  # 给页面顶栏加“刷新”按钮
+│   │       └── status-columns/  # 调整“中转站渠道状态”表格列顺序
 │   └── renderer/
 │       ├── index.html       # 主界面 + 同窗口设置视图
 │       ├── styles.css
@@ -84,3 +90,23 @@ open -a "AI Coding Monitor"
 ├── assets/                  # 应用图标与菜单栏图标
 └── build.sh                 # 一键构建脚本
 ```
+
+## 页面定制
+
+针对特定站点的 DOM 定制都放在 `src/guest/customizations/` 下，每个需求是一个独立目录：
+
+```
+customizations/
+├── index.js          # 注册表：收集所有定制模块
+├── hosts.js          # 共享域名匹配
+└── <name>/
+    ├── index.js      # 元信息：id、matches(url)、要注入的脚本
+    └── inject.js     # 页面内执行的脚本，只关心自己的 DOM 逻辑
+```
+
+主进程只负责在 webview `dom-ready` / `did-navigate-in-page` 时调用注册表，按 URL 匹配后注入对应脚本，不包含任何具体站点或页面的逻辑。新增定制时只需新建一个目录并在 `customizations/index.js` 中登记。
+
+目前已有的定制：
+
+- `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。
+- `status-columns`：把“中转站渠道状态”表格的“可用率趋势”列移动到“渠道”列之后；兼容 `/status/` 直接访问和 `/custom/status` 的同源 iframe 嵌入。

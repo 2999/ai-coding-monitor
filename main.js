@@ -16,23 +16,7 @@ const {
 const fs = require('fs');
 const path = require('path');
 const config = require('./src/config');
-
-// Match the domain itself and any subdomain of it.
-const HEADER_REFRESH_DOMAINS = ['ap-sub.top', 'svips.org'];
-
-function isHeaderRefreshHost(hostname) {
-  return HEADER_REFRESH_DOMAINS.some(
-    (domain) => hostname === domain || hostname.endsWith(`.${domain}`)
-  );
-}
-
-const HEADER_REFRESH_SCRIPT = (() => {
-  try {
-    return fs.readFileSync(path.join(__dirname, 'src', 'guest', 'header-refresh.js'), 'utf8');
-  } catch {
-    return '';
-  }
-})();
+const guestCustomizations = require('./src/guest/customizations');
 
 const PARTITION = config.PARTITION;
 const CHROME_VERSION = process.versions.chrome || '150.0.0.0';
@@ -300,14 +284,16 @@ function isAuthUrl(url) {
   }
 }
 
-function installHeaderRefresh(contents) {
-  if (!HEADER_REFRESH_SCRIPT) return;
+function installGuestScripts(contents) {
+  let url;
   try {
-    if (!isHeaderRefreshHost(new URL(contents.getURL()).hostname)) return;
+    url = new URL(contents.getURL());
   } catch {
     return;
   }
-  contents.executeJavaScript(HEADER_REFRESH_SCRIPT).catch(() => {});
+  for (const customization of guestCustomizations.matching(url)) {
+    contents.executeJavaScript(customization.script).catch(() => {});
+  }
 }
 
 function handleGuestPopup(guest, url, disposition) {
@@ -350,8 +336,8 @@ function handleGuestPopup(guest, url, disposition) {
 app.on('web-contents-created', (_event, contents) => {
   if (contents.getType() === 'webview') {
     contents.setUserAgent(CHROME_UA);
-    contents.on('dom-ready', () => installHeaderRefresh(contents));
-    contents.on('did-navigate-in-page', () => installHeaderRefresh(contents));
+    contents.on('dom-ready', () => installGuestScripts(contents));
+    contents.on('did-navigate-in-page', () => installGuestScripts(contents));
     contents.on('before-input-event', (event, input) => {
       handleKey(mainWindow, event, input);
     });
