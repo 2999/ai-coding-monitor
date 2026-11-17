@@ -1,24 +1,14 @@
 // Injected into every page of the New API dashboards (ap-sub.top / svips.org).
 // Adds a header refresh button left of the announcement icon. Clicking it
 // triggers the page's own refresh button (the one left of "重置").
+// Host/path matching lives in index.js; this file only handles the page DOM.
 (() => {
   if (window.__aimonHeaderRefreshInstalled) return;
   window.__aimonHeaderRefreshInstalled = true;
 
-  const DOMAINS = ['ap-sub.top', 'svips.org'];
   const MARK = 'data-aimon-header-refresh';
   const BTN_CLASS =
     'aimon-header-refresh flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-dark-700 shrink-0';
-
-  function isTargetHost(hostname) {
-    return DOMAINS.some(
-      (domain) => hostname === domain || hostname.endsWith('.' + domain)
-    );
-  }
-
-  function onTargetPage() {
-    return isTargetHost(location.hostname);
-  }
 
   function textOf(el) {
     return (el && el.textContent ? el.textContent : '').replace(/\s+/g, ' ').trim();
@@ -92,12 +82,6 @@
 
   function ensure() {
     const existing = document.querySelector(`[${MARK}]`);
-
-    if (!onTargetPage()) {
-      if (existing) existing.remove();
-      return;
-    }
-
     const ann = document.querySelector('button[aria-label="公告"]');
     if (!ann) return;
 
