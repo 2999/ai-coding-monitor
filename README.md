@@ -109,6 +109,6 @@ customizations/
 
 目前已有的定制：
 
-- `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。
+- `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。支持原有面板和 `codex.aitoken521.com/usage` 用量页。
 - `status-columns`：把“中转站渠道状态”表格的“可用率趋势”列移动到“渠道”列之后；兼容 `/status/` 直接访问和 `/custom/status` 的同源 iframe 嵌入。
 - `sidebar-order`：把左侧菜单的“渠道状态”移到“使用记录”之后，让用量和渠道状态相邻；Vue 重新渲染时会自动重排。

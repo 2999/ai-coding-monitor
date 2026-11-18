@@ -1,11 +1,10 @@
-// Injected into every page of the New API dashboards (ap-sub.top / svips.org).
-// Adds a header refresh button left of the announcement icon. Clicking it
-// triggers the page's own refresh button (the one left of "重置").
-// Host/path matching lives in index.js; this file only handles the page DOM.
+// Adds a header refresh button to the New API dashboards and TigerClaw's usage page.
+// Clicking it triggers the page's own refresh button (the one left of "重置").
 (() => {
   if (window.__aimonHeaderRefreshInstalled) return;
   window.__aimonHeaderRefreshInstalled = true;
 
+  const isTigerClaw = location.hostname === 'codex.aitoken521.com';
   const MARK = 'data-aimon-header-refresh';
   const BTN_CLASS =
     'aimon-header-refresh flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-dark-700 shrink-0';
@@ -82,7 +81,15 @@
 
   function ensure() {
     const existing = document.querySelector(`[${MARK}]`);
-    const ann = document.querySelector('button[aria-label="公告"]');
+    // The injected script stays active when TigerClaw changes routes in place.
+    if (isTigerClaw && !/^\/usage\/?$/.test(location.pathname)) {
+      existing?.remove();
+      return;
+    }
+
+    const ann = document.querySelector(isTigerClaw
+      ? 'header button[aria-label="公告"], header button[aria-label="Announcements"]'
+      : 'button[aria-label="公告"]');
     if (!ann) return;
 
     const wrapper = ann.parentElement;
