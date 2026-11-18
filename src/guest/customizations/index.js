@@ -5,6 +5,7 @@ const customizations = [
   require('./header-refresh'),
   require('./status-columns'),
   require('./sidebar-order'),
+  require('./usage-cost-cny'),
 ];
 
 function matching(url) {
