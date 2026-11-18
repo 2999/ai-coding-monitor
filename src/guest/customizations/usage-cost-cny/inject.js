@@ -8,6 +8,7 @@
     maximumFractionDigits: 2,
   });
   let row;
+  let amountText;
 
   function ensure() {
     if (/^\/usage\/?$/.test(location.pathname)) {
@@ -27,10 +28,13 @@
           row = document.createElement('p');
           row.setAttribute('data-aimon-usage-cost-cny', '');
           row.style.overflowWrap = 'anywhere';
+          amountText = document.createElement('span');
+          amountText.style.color = '#dc2626';
+          row.append('换算 ', amountText, ' =$total/2.5');
         }
         if (row.className !== standard.className) row.className = standard.className;
-        const text = `换算 ￥${format.format(amount / 2.5)} =$total/2.5`;
-        if (row.textContent !== text) row.textContent = text;
+        const text = `￥${format.format(amount / 2.5)}`;
+        if (amountText.textContent !== text) amountText.textContent = text;
         if (standard.nextElementSibling !== row) standard.after(row);
         return;
       }
