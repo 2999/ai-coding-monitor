@@ -4,6 +4,7 @@
 const customizations = [
   require('./header-refresh'),
   require('./status-columns'),
+  require('./sidebar-order'),
 ];
 
 function matching(url) {

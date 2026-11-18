@@ -80,7 +80,8 @@ open -a "AI Coding Monitor"
 │   │       ├── index.js     # 定制模块注册表
 │   │       ├── hosts.js     # 共享站点域名
 │   │       ├── header-refresh/  # 给页面顶栏加“刷新”按钮
-│   │       └── status-columns/  # 调整“中转站渠道状态”表格列顺序
+│   │       ├── status-columns/  # 调整“中转站渠道状态”表格列顺序
+│   │       └── sidebar-order/   # 调整左侧菜单顺序
 │   └── renderer/
 │       ├── index.html       # 主界面 + 同窗口设置视图
 │       ├── styles.css
@@ -110,3 +111,4 @@ customizations/
 
 - `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。
 - `status-columns`：把“中转站渠道状态”表格的“可用率趋势”列移动到“渠道”列之后；兼容 `/status/` 直接访问和 `/custom/status` 的同源 iframe 嵌入。
+- `sidebar-order`：把左侧菜单的“渠道状态”移到“使用记录”之后，让用量和渠道状态相邻；Vue 重新渲染时会自动重排。
