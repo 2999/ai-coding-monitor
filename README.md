@@ -110,7 +110,7 @@ customizations/
 
 目前已有的定制：
 
-- `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。支持原有面板和 `codex.aitoken521.com/usage` 用量页。
+- `header-refresh`：在页面顶栏公告图标左侧添加“刷新”按钮，点击时触发页面自带的刷新。支持原有面板和 `codex.aitoken521.com/usage`、`codex.svips.org/usage` 用量页。
 - `status-columns`：把“中转站渠道状态”表格的“可用率趋势”列移动到“渠道”列之后；兼容 `/status/` 直接访问和 `/custom/status` 的同源 iframe 嵌入。
 - `sidebar-order`：把左侧菜单的“渠道状态”移到“使用记录”之后，让用量和渠道状态相邻；Vue 重新渲染时会自动重排。
-- `usage-cost-cny`：在 `codex.aitoken521.com/usage` 的“总消费”卡片中，在“标准”下方显示 `换算 ￥xx =$total/2.5`，其中 `xx` 为实际总消费除以 2.5 的结果。
+- `usage-cost-cny`：在 `codex.aitoken521.com/usage`、`codex.svips.org/usage` 的“总消费”卡片中，在“标准”下方显示 `换算 ￥xx =$total/2.5`，其中 `xx` 为实际总消费除以 2.5 的结果。
