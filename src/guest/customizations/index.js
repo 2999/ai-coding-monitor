@@ -6,6 +6,7 @@ const customizations = [
   require('./status-columns'),
   require('./sidebar-order'),
   require('./usage-cost-cny'),
+  require('./usage-charts-bottom'),
 ];
 
 function matching(url) {

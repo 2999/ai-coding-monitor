@@ -82,7 +82,8 @@ open -a "AI Coding Monitor"
 │   │       ├── header-refresh/  # 给页面顶栏加“刷新”按钮
 │   │       ├── status-columns/  # 调整“中转站渠道状态”表格列顺序
 │   │       ├── sidebar-order/   # 调整左侧菜单顺序
-│   │       └── usage-cost-cny/  # 显示总消费折算的人民币金额
+│   │       ├── usage-cost-cny/  # 显示总消费折算的人民币金额
+│   │       └── usage-charts-bottom/ # 把用量页图表移到明细表格下方
 │   └── renderer/
 │       ├── index.html       # 主界面 + 同窗口设置视图
 │       ├── styles.css
@@ -114,3 +115,4 @@ customizations/
 - `status-columns`：把“中转站渠道状态”表格的“可用率趋势”列移动到“渠道”列之后；兼容 `/status/` 直接访问和 `/custom/status` 的同源 iframe 嵌入。
 - `sidebar-order`：把左侧菜单的“渠道状态”移到“使用记录”之后，让用量和渠道状态相邻；Vue 重新渲染时会自动重排。
 - `usage-cost-cny`：在 `codex.aitoken521.com/usage`、`codex.svips.org/usage` 的“总消费”卡片中，在“标准”下方显示 `换算 ￥xx =$total/2.5`，其中 `xx` 为实际总消费除以 2.5 的结果。
+- `usage-charts-bottom`：把用量页的“模型分布”“分组使用分布”“端点分布”“Token 使用趋势”四张图表移到使用明细表格（含分页栏）下方，让明细优先显示。支持 New API 面板的 `/usage`（`ap-sub.top`、`svips.org`）和 `codex.svips.org/usage`。
