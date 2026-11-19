@@ -4,7 +4,10 @@
   if (window.__aimonHeaderRefreshInstalled) return;
   window.__aimonHeaderRefreshInstalled = true;
 
-  const isTigerClaw = location.hostname === 'codex.aitoken521.com';
+  // Keep in sync with CODEX_HOSTS in ../hosts.js.
+  const isTigerClaw = ['codex.aitoken521.com', 'codex.svips.org'].includes(
+    location.hostname
+  );
   const MARK = 'data-aimon-header-refresh';
   const BTN_CLASS =
     'aimon-header-refresh flex h-9 items-center gap-1.5 rounded-lg px-2.5 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-dark-700 shrink-0';
