@@ -11,6 +11,7 @@
 
   const CHART_TITLES = ['模型分布', '分组使用分布', '端点分布', 'Token 使用趋势'];
   const PAGINATION_TEXT = /共\s*[\d,]+\s*条结果|上一页|下一页/;
+  const FILTER_MARK = 'data-aimon-usage-filter-bottom';
 
   function textOf(el) {
     return (el && el.textContent ? el.textContent : '').replace(/\s+/g, ' ').trim();
@@ -70,6 +71,17 @@
       const sibling = siblings[i];
       if (rows.includes(sibling)) continue;
       if (PAGINATION_TEXT.test(textOf(sibling))) anchor = sibling;
+    }
+
+    // The usage-filter-bottom customization moves the "API 密钥" filter card
+    // below the records table. Keep the charts after that card as well, so the
+    // two customizations agree on the order: table, filter card, charts.
+    const filterCard = root.querySelector(`:scope > [${FILTER_MARK}]`);
+    if (
+      filterCard &&
+      anchor.compareDocumentPosition(filterCard) & Node.DOCUMENT_POSITION_FOLLOWING
+    ) {
+      anchor = filterCard;
     }
 
     const ordered = rows
