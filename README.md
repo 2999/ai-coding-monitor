@@ -84,6 +84,7 @@ open -a "AI Coding Monitor"
 │   │       ├── sidebar-order/   # 调整左侧菜单顺序
 │   │       ├── usage-cost-cny/  # 显示总消费折算的人民币金额
 │   │       ├── usage-filter-bottom/ # 把“API 密钥”筛选卡片移到明细表格下方
+│   │       ├── usage-time-range-today/ # 若默认时间范围不是“今天”则自动切换到“今天”
 │   │       └── usage-charts-bottom/ # 把用量页图表移到明细表格下方
 │   └── renderer/
 │       ├── index.html       # 主界面 + 同窗口设置视图
@@ -118,3 +119,4 @@ customizations/
 - `usage-cost-cny`：在 `codex.aitoken521.com/usage`、`codex.svips.org/usage` 的“总消费”卡片中，在“标准”下方显示 `换算 ￥xx =$total/2.5`，其中 `xx` 为实际总消费除以 2.5 的结果。
 - `usage-charts-bottom`：把用量页的“模型分布”“分组使用分布”“端点分布”“Token 使用趋势”四张图表移到使用明细表格（含分页栏）下方，让明细优先显示。支持 New API 面板的 `/usage`（`ap-sub.top`、`svips.org`）和 `codex.svips.org/usage`。
 - `usage-filter-bottom`：把用量页中以“API 密钥”为首个筛选项的筛选卡片移到使用明细表格（含分页栏）下方，两个定制同时生效时顺序为“表格 → 筛选卡片 → 图表”。支持 New API 面板的 `/usage`（`ap-sub.top`、`svips.org`）和 `codex.svips.org/usage`。
+- `usage-time-range-today`：进入用量页后，如果“时间范围”不是“今天”，自动打开时间范围选择器并切换到“今天”；包括整页加载和从同域其他页面通过站内路由切到用量页；用户自己操作过时间范围后不再干预。支持 New API 面板的 `/usage`（`ap-sub.top`、`svips.org`）和 `codex.svips.org/usage`。

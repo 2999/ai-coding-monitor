@@ -7,6 +7,7 @@ const customizations = [
   require('./sidebar-order'),
   require('./usage-cost-cny'),
   require('./usage-filter-bottom'),
+  require('./usage-time-range-today'),
   require('./usage-charts-bottom'),
 ];
 
